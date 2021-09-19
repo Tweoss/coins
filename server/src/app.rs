@@ -227,7 +227,7 @@ impl Algorithm for ThompsonAlgoState {
 	fn new(num_arms: usize) -> ThompsonAlgoState {
 		ThompsonAlgoState {
 			past_flips: Vec::new(),
-			arm_results: vec![(0, 0, Beta::new(1.0, 1.0).unwrap()); num_arms],
+			arm_results: vec![(1, 1, Beta::new(1.0, 1.0).unwrap()); num_arms],
 		}
 	}
 	fn choose_flip(&mut self, rng: &mut ThreadRng, arms: &[Bernoulli]) {

@@ -4,13 +4,31 @@ use actix_files::NamedFile;
 use actix_web::{
 	cookie, get, http, post, web, HttpMessage, HttpRequest, HttpResponse, Responder, Result,
 };
-use rand::{rngs::ThreadRng, Rng};
+use rand::{distributions::Bernoulli, rngs::ThreadRng};
+use rand_distr::Distribution;
 use std::path::PathBuf;
 use uuid::Uuid;
 
 pub struct ApplicationState {
 	pub rng: ThreadRng,
 	pub addr: Addr<AppState>,
+	probabilities: Vec<Bernoulli>,
+}
+
+impl ApplicationState {
+	pub fn new(rng: ThreadRng, addr: Addr<AppState>, probabilities: Vec<f64>) -> Self {
+		ApplicationState {
+			rng,
+			addr,
+			probabilities: probabilities
+				.iter()
+				.map(|p| Bernoulli::new(*p).unwrap())
+				.collect::<Vec<Bernoulli>>(),
+		}
+	}
+	pub fn get_bernoulli(&self, i: usize) -> Bernoulli {
+		*self.probabilities.get(i).unwrap_or(&Bernoulli::new(0.0).unwrap())
+	}
 }
 
 /// Set a cookie for 2 hours involving a uuid and the chosen name.
@@ -18,7 +36,7 @@ pub struct ApplicationState {
 /// No redirecting
 #[get("/cookie/{id}")]
 pub async fn set_cookie(path: web::Path<String>) -> HttpResponse {
-	let cookie = (cookie::Cookie::build("player_id", Uuid::new_v4().to_string() + "_" + path.as_str()))
+	let cookie = (cookie::Cookie::build("id", Uuid::new_v4().to_string() + "_" + path.as_str()))
 		.max_age(time::Duration::hours(2))
 		.path("/")
 		.same_site(cookie::SameSite::Strict)
@@ -58,7 +76,8 @@ pub async fn game_files(path: web::Path<(String, String)>) -> Result<NamedFile> 
 #[get("/game/style/styles.css")]
 pub async fn game_style() -> Result<NamedFile> {
 	Ok(NamedFile::open(
-		"../game/style/styles.css".to_string() 
+		"../game/style/styles.css"
+			.to_string()
 			.parse::<PathBuf>()
 			.unwrap(),
 	)?)
@@ -83,7 +102,8 @@ pub async fn index_files(path: web::Path<(String, String)>) -> Result<NamedFile>
 #[get("/style/styles.css")]
 pub async fn index_style() -> Result<NamedFile> {
 	Ok(NamedFile::open(
-		"../login/style/styles.css".to_string() 
+		"../login/style/styles.css"
+			.to_string()
 			.parse::<PathBuf>()
 			.unwrap(),
 	)?)
@@ -94,17 +114,16 @@ pub async fn index_style() -> Result<NamedFile> {
 pub async fn flip(req: HttpRequest) -> impl Responder {
 	use crate::app::CoinFlipped;
 
-	println!("------------------------{:?}", req.cookies());
 	let coin = req
 		.match_info()
 		.get("coin")
 		.map(|s| s.parse::<usize>().ok())
 		.flatten()
-		.unwrap_or(0);
+		.unwrap_or(0); // if invalid, number defaults to first coin
 	let app_data = req.app_data::<web::Data<ApplicationState>>().unwrap();
 	let mut rng = app_data.rng.clone();
 	let addr = &app_data.addr;
-	let result: bool = rng.gen();
+	let result: bool = app_data.get_bernoulli(coin).sample(&mut rng);
 	addr.do_send(CoinFlipped {
 		user_id: req.cookie("id").unwrap().value().to_string(),
 		arm: coin,

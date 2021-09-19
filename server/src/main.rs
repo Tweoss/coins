@@ -25,10 +25,11 @@ async fn main() -> std::io::Result<()> {
 	HttpServer::new(move || {
 		App::new()
 			.wrap(middleware::Logger::default())
-			.data(ApplicationState {
-				rng: ThreadRng::default(),
-				addr: app_addr.clone(),
-			})
+			.data(ApplicationState::new(
+				ThreadRng::default(),
+				app_addr.clone(),
+				opts.coin_probs.clone(),
+			))
 			// .route("/cookies", web::post().to(set_cookies))
 			// .route("/redirect", web::get().to(redirect))
 			.service(handlers::set_cookie)
