@@ -124,7 +124,7 @@ impl Algorithm for NaiveAlgoState {
 				.iter()
 				.enumerate()
 				.fold((0, 0.0), |a, index_heads_tails| {
-					let proportion = index_heads_tails.1 .1 as f64
+					let proportion = index_heads_tails.1 .0 as f64
 						/ (index_heads_tails.1 .0 as f64 + index_heads_tails.1 .1 as f64);
 					if proportion > a.1 {
 						(index_heads_tails.0, proportion)
@@ -187,7 +187,7 @@ impl Algorithm for UcbAlgoState {
 						2.0 * f64::log(self.total_flips as f64, 10.0)
 							/ (index_heads_tails.1 .0 + index_heads_tails.1 .1) as f64,
 					);
-				if confidence > a.1 {
+				if confidence > a.1 || confidence.is_nan() {
 					(index_heads_tails.0, confidence)
 				} else {
 					a
@@ -248,7 +248,7 @@ impl Algorithm for ThompsonAlgoState {
 		self.flip(rng, arms, arm);
 	}
 	fn flip(&mut self, rng: &mut ThreadRng, arms: &[Bernoulli], index: usize) {
-		let mut arm = self.arm_results[index];
+		let mut arm = &mut self.arm_results[index];
 		let result = arms[index].sample(rng);
 		if result {
 			arm.0 += 1;
@@ -256,6 +256,7 @@ impl Algorithm for ThompsonAlgoState {
 			arm.1 += 1;
 		}
 		arm.2 = Beta::new(arm.0 as f64, arm.1 as f64).unwrap();
+		println!("Setting arm {} to beta with alpha {} and beta {}", index, arm.0, arm.1);
 		self.past_flips.push((index, result));
 	}
 	fn to_dump(&self) -> (String, Vec<(usize, bool)>) {
@@ -279,8 +280,6 @@ pub struct Dump {
 	players: Vec<(String, Vec<(usize, bool)>)>,
 }
 
-/// Register a new player \
-/// Forwarded from App
 #[derive(Message, Debug)]
 #[rtype(result = "()")]
 pub struct CoinFlipped {
@@ -289,11 +288,17 @@ pub struct CoinFlipped {
 	pub result: bool,
 }
 
-/// Register a new player \
-/// Forwarded from App
 #[derive(Message, Debug)]
 #[rtype(result = "()")]
 pub struct Flush {}
+
+/// Register a new player \
+/// Forwarded from App
+#[derive(Message, Debug)]
+#[rtype(i32)]
+pub struct GetCount {
+	pub id: String,
+}
 
 /// Handler for CoinFlipped message.
 impl Handler<CoinFlipped> for AppState {
@@ -319,5 +324,19 @@ impl Handler<Flush> for AppState {
 		}
 		let string = serde_json::to_string(&self.to_dump()).unwrap();
 		fs::write("dump.json", string).unwrap();
+	}
+}
+
+/// Handler for CoinFlipped message.
+impl Handler<GetCount> for AppState {
+	type Result = i32;
+	fn handle(&mut self, msg: GetCount, _: &mut Context<Self>) -> Self::Result {
+		if self.verbose {
+			println!("{:?}", msg);
+		}
+		self.past
+			.get(&msg.id)
+			.map(|past| past.iter().fold(0, |a, e| if e.1 { a + 1 } else { a - 1 }))
+			.unwrap_or(0)
 	}
 }
