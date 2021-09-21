@@ -5,7 +5,7 @@ use serde::Serialize;
 use std::collections::HashMap;
 use std::fs;
 
-const EXPLORATION_TRIALS: usize = 30;
+const EXPLORATION_TRIALS: usize = 10;
 
 /// Actor for managing state
 pub struct AppState {
