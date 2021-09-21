@@ -121,14 +121,14 @@ impl Component for Login {
 		});
 
 		let rx_load = rx.branch_filter_map(|msg: &LoginOut| match msg {
-			LoginOut::LoadedId(string) => Some(string.to_string()),
+			LoginOut::LoadedId(string) => Some(string.to_string() + " cents"),
 			_ => None,
 		});
 
 		builder!(
 		<div class="container">
-			<h1 class="text-center">{("", rx_load)}</h1>
 			<h1 class="text-center" style="pointer-events: none;">{("0", rx_count)}</h1>
+			<p class="text-center">{("0 cents", rx_load)}</p>
 			<div class="row row-cols-1 row-cols-md-3 row-cols-lg-3 row-cols-xl-3 row-cols-xxl-3">
 				<div class="col">
 					{self.coins[0].view_builder()}
