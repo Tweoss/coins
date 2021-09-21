@@ -256,7 +256,6 @@ impl Algorithm for ThompsonAlgoState {
 			arm.1 += 1;
 		}
 		arm.2 = Beta::new(arm.0 as f64, arm.1 as f64).unwrap();
-		println!("Setting arm {} to beta with alpha {} and beta {}", index, arm.0, arm.1);
 		self.past_flips.push((index, result));
 	}
 	fn to_dump(&self) -> (String, Vec<(usize, bool)>) {

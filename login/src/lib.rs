@@ -7,7 +7,6 @@ use wasm_bindgen_futures::JsFuture;
 use web_sys::{console::log, HtmlInputElement, KeyboardEvent};
 use web_sys::{Request, RequestInit, RequestMode, Response};
 
-#[allow(unused_braces)]
 // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
 // allocator.
 #[cfg(feature = "wee_alloc")]
