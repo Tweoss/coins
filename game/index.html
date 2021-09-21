@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Game Page</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.0.2/dist/cyborg/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&amp;display=swap">
+    <link rel="stylesheet" href="./style/styles.css">
+</head>
+
+<body>
+    <div id="app"></div>
+    <script type="module">
+        import init, { main } from './pkg/login.js'; window.addEventListener('load', async () => { await init(); await main("app"); });
+    </script>
+</body>
+
+</html>
