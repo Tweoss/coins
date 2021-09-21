@@ -30,8 +30,6 @@ async fn main() -> std::io::Result<()> {
 				app_addr.clone(),
 				opts.coin_probs.clone(),
 			))
-			// .route("/cookies", web::post().to(set_cookies))
-			// .route("/redirect", web::get().to(redirect))
 			.service(handlers::set_cookie)
 			.route("/game/", web::get().to(handlers::game_html))
 			.service(handlers::game_files)
@@ -42,6 +40,7 @@ async fn main() -> std::io::Result<()> {
 			.service(handlers::index)
 			.service(handlers::index_files)
 			.service(handlers::index_style)
+			.service(handlers::count)
 			.default_service(web::get().to(handlers::not_found))
 	})
 	.bind("0.0.0.0:8080")?

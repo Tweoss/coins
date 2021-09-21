@@ -27,7 +27,10 @@ impl ApplicationState {
 		}
 	}
 	pub fn get_bernoulli(&self, i: usize) -> Bernoulli {
-		*self.probabilities.get(i).unwrap_or(&Bernoulli::new(0.0).unwrap())
+		*self
+			.probabilities
+			.get(i)
+			.unwrap_or(&Bernoulli::new(0.0).unwrap())
 	}
 }
 
@@ -110,7 +113,7 @@ pub async fn index_style() -> Result<NamedFile> {
 }
 
 /// Flip a coin using the thread rng handle. Send the result to application
-#[post("/flip/{coin}")]
+#[get("/flip/{coin}")]
 pub async fn flip(req: HttpRequest) -> impl Responder {
 	use crate::app::CoinFlipped;
 
@@ -132,6 +135,21 @@ pub async fn flip(req: HttpRequest) -> impl Responder {
 	HttpResponse::build(http::StatusCode::OK)
 		.content_type("plain/text")
 		.body(format!("{}", result))
+}
+
+#[get("/count")]
+pub async fn count(req: HttpRequest) -> impl Responder {
+	use crate::app::GetCount;
+	let id = req.cookie("id").unwrap().value().to_string();
+	let app_data = req.app_data::<web::Data<ApplicationState>>().unwrap();
+	let addr = &app_data.addr;
+	let count = addr
+		.send(GetCount { id: id.clone() })
+		.await
+		.expect("Failed to get count");
+	HttpResponse::build(http::StatusCode::OK)
+		.content_type("plain/text")
+		.body(format!("{}\n{}", count, id))
 }
 
 /// Send a message to the application to flush state
