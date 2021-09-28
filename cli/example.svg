@@ -156,16 +156,6 @@
        type="xygrid"
        id="grid12" />
   </sodipodi:namedview>
-  <svg viewBox="0 0 1 1">
-   <g transform="translate(0.15125 0.9015) scale(0.252 -.252)" id="thompson-g">
-      <!-- <path d="M 0 0.0 L 1 1 L 1 0 L 0.0 0.00 L 0.0 1.0 L 1.0 1.0 Z" fill="transparent" stroke="red" stroke-width="0.005"/> -->
-   </g>
- </svg>
- <svg viewBox="0 0 1 1">
-   <g transform="translate(0.5545 0.9015) scale(0.252 -.252)" id="ucb-g">
-      <path d="M 0 0.0 L 1 1 L 1 0 L 0.0 0.00 L 0.0 1.0 L 1.0 1.0 Z" fill="transparent" stroke="red" stroke-width="0.005"/>
-   </g>
- </svg>
   <g
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
@@ -267,7 +257,7 @@
          x="39.6875"
          y="158.75"
          style="stroke-width:0.264583"
-         id="tspan1078">12 2</tspan></text>
+         id="tspan1078">## THOMPSON COUNT ##</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:4.5861px;line-height:1.25;font-family:sans-serif;text-align:center;text-anchor:middle;stroke-width:0.264583"
@@ -278,7 +268,7 @@
          x="82.020836"
          y="158.75"
          style="stroke-width:0.264583"
-         id="tspan1078-4">12 2</tspan></text>
+         id="tspan1078-4">## NAIVE COUNT ##</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:4.5861px;line-height:1.25;font-family:sans-serif;text-align:center;text-anchor:middle;stroke-width:0.264583"
@@ -291,7 +281,7 @@
          x="124.56371"
          y="158.74974"
          style="stroke-width:0.264583"
-         id="tspan1078-9">12 2</tspan></text>
+         id="tspan1078-9">## UCB COUNT ##</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:4.5861px;line-height:1.25;font-family:sans-serif;text-align:center;text-anchor:middle;stroke-width:0.264583"
@@ -302,7 +292,7 @@
          x="166.5509"
          y="158.74974"
          style="stroke-width:0.264583"
-         id="tspan1078-4-9">12 2</tspan></text>
+         id="tspan1078-4-9">## PLAYER COUNT ##</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:4.5861px;line-height:1.25;font-family:sans-serif;text-align:center;text-anchor:middle;stroke-width:0.264583"
@@ -346,7 +336,7 @@
          id="tspan1192"
          x="166.6875"
          y="23.8125"
-         style="stroke-width:0.264583">Name Here</tspan></text>
+         style="stroke-width:0.264583">## NAME HERE ##</tspan></text>
     <rect
        style="fill:#000000;fill-opacity:0;stroke:#1d00ff;stroke-width:1;stroke-linejoin:round;stroke-opacity:1;paint-order:markers fill stroke"
        id="rect1196"
