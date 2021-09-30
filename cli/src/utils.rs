@@ -163,6 +163,7 @@ impl RenderState {
 	pub fn render(&self, base_svg: &usvg::Tree) -> usvg::Tree {
 		let svg = usvg::Tree::create(*base_svg.svg_node());
 		svg.root().clone_from(&base_svg.root().make_deep_copy());
+		render_thompson(&svg, &self.thompson.1);
 
 		render_boxes(
 			&svg,
@@ -196,7 +197,6 @@ impl RenderState {
 			self.player.count[2],
 			self.player.failures + self.player.successes,
 		);
-		render_thompson(&svg, &self.thompson.1);
 		svg
 	}
 }
@@ -311,7 +311,10 @@ fn render_thompson(tree: &usvg::Tree, thompson: &ThompsonBetaState) {
 	fn append(tree: &usvg::Tree, a: f64, b: f64, stroke_color: usvg::Paint) {
 		use rv::prelude::ContinuousDistr;
 		let dist = rv::dist::Beta::new(a, b).unwrap();
-		let mut path = vec![PathSegment::MoveTo { x: 0.001, y: dist.pdf(&0.001) }];
+		let mut path = vec![PathSegment::MoveTo {
+			x: 0.001,
+			y: dist.pdf(&0.001),
+		}];
 		path.append(
 			&mut (1..20)
 				.map(|i| {
@@ -334,9 +337,38 @@ fn render_thompson(tree: &usvg::Tree, thompson: &ThompsonBetaState) {
 			..usvg::Path::default()
 		}));
 	}
-	append(tree, a1 as f64, b1 as f64, usvg::Paint::Color(usvg::Color::new_rgb(0, 157, 255)));
-	append(tree, a2 as f64, b2 as f64, usvg::Paint::Color(usvg::Color::new_rgb(255, 95, 89)));
-	append(tree, a3 as f64, b3 as f64, usvg::Paint::Color(usvg::Color::new_rgb(0, 176, 89)));
+	append(
+		tree,
+		a1 as f64,
+		b1 as f64,
+		usvg::Paint::Color(usvg::Color::new_rgb(0, 157, 255)),
+	);
+	append(
+		tree,
+		a2 as f64,
+		b2 as f64,
+		usvg::Paint::Color(usvg::Color::new_rgb(255, 95, 89)),
+	);
+	append(
+		tree,
+		a3 as f64,
+		b3 as f64,
+		usvg::Paint::Color(usvg::Color::new_rgb(0, 176, 89)),
+	);
+	// block out anything above
+	tree.root().append_kind(usvg::NodeKind::Path(usvg::Path {
+		data: std::rc::Rc::new(usvg::PathData(vec![
+			PathSegment::MoveTo { x: 0.0, y: 1.1969697 },
+			PathSegment::LineTo { x: 1.0, y: 1.1969697 },
+			PathSegment::LineTo { x: 1.0, y: 50.0 },
+			PathSegment::LineTo { x: 0.0, y: 50.0 },
+			PathSegment::ClosePath,
+		])),
+		transform: usvg::Transform::new(52.92, 0.0, 0.0, -52.92, 31.7625, 232.815),
+		fill: Some(usvg::Fill::from_paint(usvg::Paint::Color(usvg::Color::new_rgb(255, 255, 255)))),
+		stroke: None,
+		..usvg::Path::default()
+	}));
 }
 
 fn render_ucb(tree: &usvg::Tree, thompson: &ThompsonBetaState) {
@@ -368,7 +400,22 @@ fn render_ucb(tree: &usvg::Tree, thompson: &ThompsonBetaState) {
 			..usvg::Path::default()
 		}));
 	}
-	append(tree, a1 as f64, b1 as f64, usvg::Paint::Color(usvg::Color::new_rgb(0, 157, 255)));
-	append(tree, a2 as f64, b2 as f64, usvg::Paint::Color(usvg::Color::new_rgb(255, 95, 89)));
-	append(tree, a3 as f64, b3 as f64, usvg::Paint::Color(usvg::Color::new_rgb(0, 176, 89)));
+	append(
+		tree,
+		a1 as f64,
+		b1 as f64,
+		usvg::Paint::Color(usvg::Color::new_rgb(0, 157, 255)),
+	);
+	append(
+		tree,
+		a2 as f64,
+		b2 as f64,
+		usvg::Paint::Color(usvg::Color::new_rgb(255, 95, 89)),
+	);
+	append(
+		tree,
+		a3 as f64,
+		b3 as f64,
+		usvg::Paint::Color(usvg::Color::new_rgb(0, 176, 89)),
+	);
 }

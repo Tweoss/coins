@@ -18,15 +18,6 @@ fn main() {
     let pixmap_size = rtree.svg_node().size.to_screen_size();
 
     let mut top_pixmap = tiny_skia::Pixmap::new(pixmap_size.width(), pixmap_size.height()).unwrap();
-    // have a white background for the top portion
-    let mut paint = tiny_skia::Paint::default();
-    paint.set_color(tiny_skia::Color::WHITE);
-    top_pixmap.fill_rect(
-        tiny_skia::Rect::from_xywh(0.0, 0.0, 794.0, 638.0).unwrap(),
-        &paint,
-        tiny_skia::Transform::identity(),
-        None,
-    );
 
     resvg::render(&base_tree, usvg::FitTo::Original, top_pixmap.as_mut()).unwrap();
 

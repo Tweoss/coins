@@ -177,76 +177,6 @@
        style="fill:none;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 153.45833,26.458333 h 26.45833"
        id="path981" />
-    <rect
-       style="fill:#009dff;fill-opacity:1;stroke:#f9f9f9;stroke-width:0.632455;stroke-linejoin:round;paint-order:markers fill stroke"
-       id="rect986"
-       width="26.458332"
-       height="105.83333"
-       x="26.458332"
-       y="37.041668" />
-    <rect
-       style="fill:#009dff;fill-opacity:1;stroke:#f9f9f9;stroke-width:0.632456;stroke-linejoin:round;paint-order:markers fill stroke"
-       id="rect986-6"
-       width="26.458334"
-       height="42.333347"
-       x="68.791664"
-       y="37.041653" />
-    <rect
-       style="fill:#ff5f59;fill-opacity:1;stroke:#f9f9f9;stroke-width:0.632455;stroke-linejoin:round;paint-order:markers fill stroke"
-       id="rect986-6-3"
-       width="26.458334"
-       height="42.333351"
-       x="68.791664"
-       y="79.375" />
-    <rect
-       style="fill:#00b059;fill-opacity:1;stroke:#f9f9f9;stroke-width:0.447213;stroke-linejoin:round;paint-order:markers fill stroke"
-       id="rect986-6-3-3"
-       width="26.458334"
-       height="21.166685"
-       x="68.791664"
-       y="121.70831" />
-    <rect
-       style="fill:#009dff;fill-opacity:1;stroke:#f9f9f9;stroke-width:0.632455;stroke-linejoin:round;paint-order:markers fill stroke"
-       id="rect986-6-9"
-       width="26.458334"
-       height="42.333351"
-       x="111.125"
-       y="37.041649" />
-    <rect
-       style="fill:#ff5f59;fill-opacity:1;stroke:#f9f9f9;stroke-width:0.632455;stroke-linejoin:round;paint-order:markers fill stroke"
-       id="rect986-6-3-1"
-       width="26.458334"
-       height="42.333355"
-       x="111.125"
-       y="79.375" />
-    <rect
-       style="fill:#00b059;fill-opacity:1;stroke:#f9f9f9;stroke-width:0.447212;stroke-linejoin:round;paint-order:markers fill stroke"
-       id="rect986-6-3-3-0"
-       width="26.458334"
-       height="21.166685"
-       x="111.125"
-       y="121.70831" />
-    <rect
-       style="fill:#009dff;fill-opacity:1;stroke:#f9f9f9;stroke-width:0.632455;stroke-linejoin:round;paint-order:markers fill stroke"
-       id="rect986-6-1"
-       width="26.458334"
-       height="42.333351"
-       x="153.45833"
-       y="37.041672" />
-    <rect
-       style="fill:#ff5f59;fill-opacity:1;stroke:#f9f9f9;stroke-width:0.632455;stroke-linejoin:round;paint-order:markers fill stroke"
-       id="rect986-6-3-9"
-       width="26.458334"
-       height="42.333355"
-       x="153.45833"
-       y="79.375023" />
-    <rect
-       style="fill:#00b059;fill-opacity:1;stroke:#f9f9f9;stroke-width:0.447212;stroke-linejoin:round;paint-order:markers fill stroke"
-       id="rect986-6-3-3-8"
-       width="26.458334"
-       height="21.166685"
-       x="153.45833"
-       y="121.70834" />
     <text
        xml:space="preserve"
        style="font-size:4.5861px;line-height:1.25;font-family:sans-serif;text-align:center;text-anchor:middle;stroke-width:0.264583"
@@ -337,13 +267,13 @@
          x="166.6875"
          y="23.8125"
          style="stroke-width:0.264583">## NAME HERE ##</tspan></text>
-    <rect
-       style="fill:#000000;fill-opacity:0;stroke:#1d00ff;stroke-width:1;stroke-linejoin:round;stroke-opacity:1;paint-order:markers fill stroke"
-       id="rect1196"
-       width="68.791679"
-       height="68.791672"
-       x="26.458334"
-       y="169.33333" />
+      <rect
+      style="fill:#000000;fill-opacity:0;stroke:#1d00ff;stroke-width:1;stroke-linejoin:round;stroke-opacity:1;paint-order:markers fill stroke"
+      id="rect1196"
+      width="68.791679"
+      height="68.791672"
+      x="26.458334"
+      y="169.33333" />
     <rect
        style="fill:#000000;fill-opacity:0;stroke:#e69cff;stroke-width:1;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:markers fill stroke"
        id="rect1196-5"
