@@ -459,7 +459,7 @@ fn render_text(
 		.replace("## UCB COUNT ##", &format!("{}/{}", ucb.0, ucb.0 + ucb.1))
 		.replace(
 			"## PLAYER COUNT ##",
-			&format!("{}/{}", player.0, player.1 + player.1),
+			&format!("{}/{}", player.0, player.0 + player.1),
 		);
 	let text_tree = usvg::Tree::from_data(&svg_data.as_bytes(), &opt.to_ref()).unwrap();
 	tree.root().append(text_tree.root().make_deep_copy());
