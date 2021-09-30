@@ -1,4 +1,3 @@
-use usvg::PathSegment;
 mod utils;
 use utils::*;
 
@@ -11,8 +10,10 @@ fn main() {
     let data = Dump::load("../server/dump.json").to_filtered();
     let mut state = RenderState::new();
 
-    let svg_data =
-        include_str!("../template.svg").replace("## NAME HERE ##", &data.best_player_name);
+    let svg_data = include_str!("../template.svg").replace(
+        "## NAME HERE ##",
+        &data.best_player_name.splitn(2, '_').collect::<Vec<&str>>()[1],
+    );
     let base_tree = usvg::Tree::from_data(&svg_data.as_bytes(), &opt.to_ref()).unwrap();
     let rtree = usvg::Tree::create(*base_tree.svg_node());
     let pixmap_size = rtree.svg_node().size.to_screen_size();
@@ -23,14 +24,12 @@ fn main() {
 
     let mut output_map = tiny_skia::Pixmap::new(pixmap_size.width(), pixmap_size.height()).unwrap();
 
-    let total_iterations = data
-        .thompson
-        .len()
-        .max(data.ucb.len())
-        .max(data.naive.len())
-        .max(data.best_player.len());
+    // iterate for the longest number of turns taken. thompson, ucb, and naive should all have the same length
+    let total_iterations = data.thompson.len().max(data.best_player.len());
     for i in 0..=total_iterations {
+        // update what each algorithm sees
         state.update(&data, i);
+        // render to a clone to a tree
         let new_tree = state.render(&rtree);
         output_map.fill(tiny_skia::Color::WHITE);
         resvg::render(&new_tree, usvg::FitTo::Original, output_map.as_mut()).unwrap();
