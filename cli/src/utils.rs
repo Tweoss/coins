@@ -98,20 +98,20 @@ pub struct ThompsonBetaState {
 impl ThompsonBetaState {
 	fn new() -> Self {
 		Self {
-			a: vec![0; 3],
-			b: vec![0; 3],
+			a: vec![1; 3],
+			b: vec![1; 3],
 		}
 	}
 }
 
-pub struct UCBCountState {
+pub struct UcbCountState {
 	successes: Vec<usize>,
 	total_flips: usize,
 }
 
-impl UCBCountState {
+impl UcbCountState {
 	fn new() -> Self {
-		Self {
+		UcbCountState {
 			successes: vec![0; 3],
 			total_flips: 0,
 		}
@@ -120,7 +120,7 @@ impl UCBCountState {
 
 pub struct RenderState {
 	thompson: (GeneralState, ThompsonBetaState),
-	ucb: (GeneralState, UCBCountState),
+	ucb: (GeneralState, UcbCountState),
 	naive: GeneralState,
 	player: GeneralState,
 }
@@ -129,7 +129,7 @@ impl RenderState {
 	pub fn new() -> Self {
 		Self {
 			thompson: (GeneralState::new(), ThompsonBetaState::new()),
-			ucb: (GeneralState::new(), UCBCountState::new()),
+			ucb: (GeneralState::new(), UcbCountState::new()),
 			naive: GeneralState::new(),
 			player: GeneralState::new(),
 		}
@@ -196,6 +196,7 @@ impl RenderState {
 			self.player.count[2],
 			self.player.failures + self.player.successes,
 		);
+		render_thompson(&svg, &self.thompson.1);
 		svg
 	}
 }
@@ -253,7 +254,7 @@ fn render_boxes(
 		base_height + 0.0,
 		width,
 		scale_height * p1,
-		usvg::Fill::from_paint(usvg::Paint::Color(usvg::Color::new_rgb(0,157,255))),
+		usvg::Fill::from_paint(usvg::Paint::Color(usvg::Color::new_rgb(0, 157, 255))),
 	);
 	append(
 		tree,
@@ -269,7 +270,7 @@ fn render_boxes(
 		base_height + scale_height * (p1 + p2),
 		width,
 		scale_height * p3,
-		usvg::Fill::from_paint(usvg::Paint::Color(usvg::Color::new_rgb(0,176,89))),
+		usvg::Fill::from_paint(usvg::Paint::Color(usvg::Color::new_rgb(0, 176, 89))),
 	);
 }
 
@@ -302,4 +303,72 @@ pub fn render_paths(
 			..usvg::Path::default()
 		}));
 	}
+}
+
+fn render_thompson(tree: &usvg::Tree, thompson: &ThompsonBetaState) {
+	let (a1, a2, a3) = (thompson.a[0], thompson.a[1], thompson.a[2]);
+	let (b1, b2, b3) = (thompson.b[0], thompson.b[1], thompson.b[2]);
+	fn append(tree: &usvg::Tree, a: f64, b: f64, stroke_color: usvg::Paint) {
+		use rv::prelude::ContinuousDistr;
+		let dist = rv::dist::Beta::new(a, b).unwrap();
+		let mut path = vec![PathSegment::MoveTo { x: 0.0, y: 0.0 }];
+		path.append(
+			&mut (1..20)
+				.map(|i| {
+					let x = i as f64 / 20.0;
+					let y = dist.pdf(&x);
+					PathSegment::LineTo { x, y }
+				})
+				.collect::<Vec<PathSegment>>(),
+		);
+		path.push(PathSegment::MoveTo { x: 1.0, y: 0.0 });
+		path.push(PathSegment::ClosePath);
+		tree.root().append_kind(usvg::NodeKind::Path(usvg::Path {
+			data: std::rc::Rc::new(usvg::PathData(path)),
+			stroke: Some(usvg::Stroke {
+				paint: stroke_color,
+				width: usvg::StrokeWidth::new(0.02),
+				..usvg::Stroke::default()
+			}),
+			transform: usvg::Transform::new(52.92, 0.0, 0.0, -52.92, 31.7625, 232.815),
+			..usvg::Path::default()
+		}));
+	}
+	append(tree, a1 as f64, b1 as f64, usvg::Paint::Color(usvg::Color::new_rgb(0, 157, 255)));
+	append(tree, a2 as f64, b2 as f64, usvg::Paint::Color(usvg::Color::new_rgb(255, 95, 89)));
+	append(tree, a3 as f64, b3 as f64, usvg::Paint::Color(usvg::Color::new_rgb(0, 176, 89)));
+}
+
+fn render_ucb(tree: &usvg::Tree, thompson: &ThompsonBetaState) {
+	let (a1, a2, a3) = (thompson.a[0], thompson.a[1], thompson.a[2]);
+	let (b1, b2, b3) = (thompson.b[0], thompson.b[1], thompson.b[2]);
+	fn append(tree: &usvg::Tree, a: f64, b: f64, stroke_color: usvg::Paint) {
+		use rv::prelude::ContinuousDistr;
+		let dist = rv::dist::Beta::new(a, b).unwrap();
+		let mut path = vec![PathSegment::MoveTo { x: 0.0, y: 0.0 }];
+		path.append(
+			&mut (1..20)
+				.map(|i| {
+					let x = i as f64 / 20.0;
+					let y = dist.pdf(&x);
+					PathSegment::LineTo { x, y }
+				})
+				.collect::<Vec<PathSegment>>(),
+		);
+		path.push(PathSegment::MoveTo { x: 1.0, y: 0.0 });
+		path.push(PathSegment::ClosePath);
+		tree.root().append_kind(usvg::NodeKind::Path(usvg::Path {
+			data: std::rc::Rc::new(usvg::PathData(path)),
+			stroke: Some(usvg::Stroke {
+				paint: stroke_color,
+				width: usvg::StrokeWidth::new(0.02),
+				..usvg::Stroke::default()
+			}),
+			transform: usvg::Transform::new(52.92, 0.0, 0.0, -52.92, 31.7625, 232.815),
+			..usvg::Path::default()
+		}));
+	}
+	append(tree, a1 as f64, b1 as f64, usvg::Paint::Color(usvg::Color::new_rgb(0, 157, 255)));
+	append(tree, a2 as f64, b2 as f64, usvg::Paint::Color(usvg::Color::new_rgb(255, 95, 89)));
+	append(tree, a3 as f64, b3 as f64, usvg::Paint::Color(usvg::Color::new_rgb(0, 176, 89)));
 }
