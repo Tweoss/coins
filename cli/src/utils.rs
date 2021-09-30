@@ -197,6 +197,14 @@ impl RenderState {
 			self.player.count[2],
 			self.player.failures + self.player.successes,
 		);
+
+		render_text(
+			&svg,
+			(self.thompson.0.successes, self.thompson.0.failures),
+			(self.naive.successes, self.naive.failures),
+			(self.ucb.0.successes, self.ucb.0.failures),
+			(self.player.successes, self.player.failures),
+		);
 		svg
 	}
 }
@@ -358,14 +366,22 @@ fn render_thompson(tree: &usvg::Tree, thompson: &ThompsonBetaState) {
 	// block out anything above
 	tree.root().append_kind(usvg::NodeKind::Path(usvg::Path {
 		data: std::rc::Rc::new(usvg::PathData(vec![
-			PathSegment::MoveTo { x: 0.0, y: 1.1969697 },
-			PathSegment::LineTo { x: 1.0, y: 1.1969697 },
+			PathSegment::MoveTo {
+				x: 0.0,
+				y: 1.1969697,
+			},
+			PathSegment::LineTo {
+				x: 1.0,
+				y: 1.1969697,
+			},
 			PathSegment::LineTo { x: 1.0, y: 50.0 },
 			PathSegment::LineTo { x: 0.0, y: 50.0 },
 			PathSegment::ClosePath,
 		])),
 		transform: usvg::Transform::new(52.92, 0.0, 0.0, -52.92, 31.7625, 232.815),
-		fill: Some(usvg::Fill::from_paint(usvg::Paint::Color(usvg::Color::new_rgb(255, 255, 255)))),
+		fill: Some(usvg::Fill::from_paint(usvg::Paint::Color(
+			usvg::Color::new_rgb(255, 255, 255),
+		))),
 		stroke: None,
 		..usvg::Path::default()
 	}));
@@ -418,4 +434,33 @@ fn render_ucb(tree: &usvg::Tree, thompson: &ThompsonBetaState) {
 		b3 as f64,
 		usvg::Paint::Color(usvg::Color::new_rgb(0, 176, 89)),
 	);
+}
+
+fn render_text(
+	tree: &usvg::Tree,
+	thompson: (usize, usize),
+	naive: (usize, usize),
+	ucb: (usize, usize),
+	player: (usize, usize),
+) {
+	let mut opt = usvg::Options {
+		..usvg::Options::default()
+	};
+	opt.fontdb.load_system_fonts();
+	let svg_data = include_str!("../text_template.svg")
+		.replace(
+			"## THOMPSON COUNT ##",
+			&format!("{}/{}", thompson.0, thompson.0 + thompson.1),
+		)
+		.replace(
+			"## NAIVE COUNT ##",
+			&format!("{}/{}", naive.0, naive.0 + naive.1),
+		)
+		.replace("## UCB COUNT ##", &format!("{}/{}", ucb.0, ucb.0 + ucb.1))
+		.replace(
+			"## PLAYER COUNT ##",
+			&format!("{}/{}", player.0, player.1 + player.1),
+		);
+	let text_tree = usvg::Tree::from_data(&svg_data.as_bytes(), &opt.to_ref()).unwrap();
+	tree.root().append(text_tree.root().make_deep_copy());
 }
