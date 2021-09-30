@@ -12,7 +12,7 @@ fn main() {
     let mut state = RenderState::new();
 
     let svg_data =
-        include_str!("../example.svg").replace("## NAME HERE ##", &data.best_player_name);
+        include_str!("../template.svg").replace("## NAME HERE ##", &data.best_player_name);
     let base_tree = usvg::Tree::from_data(&svg_data.as_bytes(), &opt.to_ref()).unwrap();
     let rtree = usvg::Tree::create(*base_tree.svg_node());
     let pixmap_size = rtree.svg_node().size.to_screen_size();
