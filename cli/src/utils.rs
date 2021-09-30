@@ -311,7 +311,7 @@ fn render_thompson(tree: &usvg::Tree, thompson: &ThompsonBetaState) {
 	fn append(tree: &usvg::Tree, a: f64, b: f64, stroke_color: usvg::Paint) {
 		use rv::prelude::ContinuousDistr;
 		let dist = rv::dist::Beta::new(a, b).unwrap();
-		let mut path = vec![PathSegment::MoveTo { x: 0.0, y: 0.0 }];
+		let mut path = vec![PathSegment::MoveTo { x: 0.001, y: dist.pdf(&0.001) }];
 		path.append(
 			&mut (1..20)
 				.map(|i| {
