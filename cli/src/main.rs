@@ -1,32 +1,6 @@
-use usvg::NodeExt;
 use usvg::PathSegment;
-
-fn render_paths(thompson_paths: Vec<(usvg::PathData, usvg::Paint)>, ucb_paths: Vec<(usvg::PathData, usvg::Paint)>, rtree: &usvg::Tree) {
-    for path in thompson_paths {
-        rtree.root().append_kind(usvg::NodeKind::Path(usvg::Path {
-            data: std::rc::Rc::new(path.0),
-            stroke: Some(usvg::Stroke {
-                paint: path.1,
-                width: usvg::StrokeWidth::new(0.005),
-                ..usvg::Stroke::default()
-            }),
-            transform: usvg::Transform::new(52.92, 0.0, 0.0, -52.92, 31.7625, 232.815),
-            ..usvg::Path::default()
-        }));
-    }
-    for path in ucb_paths {
-        rtree.root().append_kind(usvg::NodeKind::Path(usvg::Path {
-            data: std::rc::Rc::new(path.0),
-            stroke: Some(usvg::Stroke {
-                paint: path.1,
-                width: usvg::StrokeWidth::new(0.005),
-                ..usvg::Stroke::default()
-            }),
-            transform: usvg::Transform::new(52.92, 0.0, 0.0, -52.92, 116.445, 232.815),
-            ..usvg::Path::default()
-        }));
-    }
-}
+mod utils;
+use utils::*;
 
 fn main() {
     let args: Vec<String> = std::env::args().collect();
@@ -41,10 +15,13 @@ fn main() {
             .and_then(|p| p.parent().map(|p| p.to_path_buf())),
         ..usvg::Options::default()
     };
-
-    // Get file's absolute directory.
     opt.fontdb.load_system_fonts();
-    let svg_data = include_str!("../example.svg").replace("## NAME HERE ##", &args[1]);
+
+
+    let data = Dump::load("../server/dump.json").to_filtered();
+    let mut state = RenderState::new();
+    
+    let svg_data = include_str!("../example.svg").replace("## NAME HERE ##", &data.best_player_name);
 
     let rtree = usvg::Tree::from_data(&svg_data.as_bytes(), &opt.to_ref()).unwrap();
 
@@ -73,7 +50,6 @@ fn main() {
         ]),
         usvg::Paint::Color(usvg::Color::new_rgb(255, 95, 89)),
     )];
-
 
     render_paths(thompson_paths, ucb_paths, &rtree);
     let pixmap_size = rtree.svg_node().size.to_screen_size();
