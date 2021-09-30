@@ -73,7 +73,6 @@ impl FilteredData {
 	}
 }
 
-#[derive(Default)]
 pub struct GeneralState {
 	/// Count for each coin
 	count: Vec<usize>,
@@ -81,16 +80,42 @@ pub struct GeneralState {
 	failures: usize,
 }
 
-#[derive(Default)]
+impl GeneralState {
+	fn new() -> Self {
+		Self {
+			count: vec![0; 3],
+			successes: 0,
+			failures: 0,
+		}
+	}
+}
+
 pub struct ThompsonBetaState {
 	a: Vec<usize>,
 	b: Vec<usize>,
 }
 
-#[derive(Default)]
+impl ThompsonBetaState {
+	fn new() -> Self {
+		Self {
+			a: vec![0; 3],
+			b: vec![0; 3],
+		}
+	}
+}
+
 pub struct UCBCountState {
 	successes: Vec<usize>,
 	total_flips: usize,
+}
+
+impl UCBCountState {
+	fn new() -> Self {
+		Self {
+			successes: vec![0; 3],
+			total_flips: 0,
+		}
+	}
 }
 
 pub struct RenderState {
@@ -103,10 +128,10 @@ pub struct RenderState {
 impl RenderState {
 	pub fn new() -> Self {
 		Self {
-			thompson: (GeneralState::default(), ThompsonBetaState::default()),
-			ucb: (GeneralState::default(), UCBCountState::default()),
-			naive: GeneralState::default(),
-			player: GeneralState::default(),
+			thompson: (GeneralState::new(), ThompsonBetaState::new()),
+			ucb: (GeneralState::new(), UCBCountState::new()),
+			naive: GeneralState::new(),
+			player: GeneralState::new(),
 		}
 	}
 	pub fn update(&mut self, data: &FilteredData, index: usize) {
@@ -136,7 +161,9 @@ impl RenderState {
 		};
 	}
 	pub fn render(&self, base_svg: &usvg::Tree) -> usvg::Tree {
-		let svg = base_svg.clone();
+		let svg = usvg::Tree::create(*base_svg.svg_node());
+		svg.root().clone_from(&base_svg.root().make_deep_copy());
+
 		render_boxes(
 			&svg,
 			0,
@@ -226,14 +253,14 @@ fn render_boxes(
 		base_height + 0.0,
 		width,
 		scale_height * p1,
-		usvg::Fill::from_paint(usvg::Paint::Color(usvg::Color::new_rgb(255, 95, 89))),
+		usvg::Fill::from_paint(usvg::Paint::Color(usvg::Color::new_rgb(0,157,255))),
 	);
 	append(
 		tree,
 		base_width,
 		base_height + scale_height * p1,
 		width,
-		scale_height * (p1 + p2),
+		scale_height * p2,
 		usvg::Fill::from_paint(usvg::Paint::Color(usvg::Color::new_rgb(255, 95, 89))),
 	);
 	append(
@@ -241,8 +268,8 @@ fn render_boxes(
 		base_width,
 		base_height + scale_height * (p1 + p2),
 		width,
-		scale_height * (p1 + p2 + p3),
-		usvg::Fill::from_paint(usvg::Paint::Color(usvg::Color::new_rgb(255, 95, 89))),
+		scale_height * p3,
+		usvg::Fill::from_paint(usvg::Paint::Color(usvg::Color::new_rgb(0,176,89))),
 	);
 }
 
