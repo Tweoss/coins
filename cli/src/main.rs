@@ -29,10 +29,8 @@ fn main() {
     );
 
     resvg::render(&base_tree, usvg::FitTo::Original, top_pixmap.as_mut()).unwrap();
-    let mut drawing_pixmap =
-        tiny_skia::Pixmap::new(pixmap_size.width(), pixmap_size.height()).unwrap();
 
-    let mut output_map = drawing_pixmap.clone();
+    let mut output_map = tiny_skia::Pixmap::new(pixmap_size.width(), pixmap_size.height()).unwrap();
 
     let total_iterations = data
         .thompson
@@ -42,18 +40,9 @@ fn main() {
         .max(data.best_player.len());
     for i in 0..=total_iterations {
         state.update(&data, i);
-        let new_tree = state.render(&rtree.clone());
-        drawing_pixmap.fill(tiny_skia::Color::TRANSPARENT);
-        resvg::render(&new_tree, usvg::FitTo::Original, drawing_pixmap.as_mut()).unwrap();
+        let new_tree = state.render(&rtree);
         output_map.fill(tiny_skia::Color::WHITE);
-        output_map.draw_pixmap(
-            0,
-            0,
-            drawing_pixmap.as_ref(),
-            &tiny_skia::PixmapPaint::default(),
-            tiny_skia::Transform::identity(),
-            None,
-        );
+        resvg::render(&new_tree, usvg::FitTo::Original, output_map.as_mut()).unwrap();
         output_map.draw_pixmap(
             0,
             0,
@@ -66,32 +55,4 @@ fn main() {
         output_map.save_png(&format!("./images/{}.png", i)).unwrap();
         println!("{}/{}", i, total_iterations)
     }
-
-    let thompson_paths = vec![(
-        usvg::PathData(vec![
-            PathSegment::MoveTo { x: 0.0, y: 0.0 },
-            PathSegment::LineTo { x: 1.0, y: 1.0 },
-            PathSegment::LineTo { x: 1.0, y: 0.0 },
-            PathSegment::LineTo { x: 0.0, y: 0.0 },
-            PathSegment::LineTo { x: 0.0, y: 1.0 },
-            PathSegment::LineTo { x: 1.0, y: 1.0 },
-            PathSegment::ClosePath,
-        ]),
-        usvg::Paint::Color(usvg::Color::new_rgb(0, 157, 221)),
-    )];
-
-    let ucb_paths = vec![(
-        usvg::PathData(vec![
-            PathSegment::MoveTo { x: 0.0, y: 0.0 },
-            PathSegment::LineTo { x: 1.0, y: 1.0 },
-            PathSegment::LineTo { x: 1.0, y: 0.0 },
-            PathSegment::LineTo { x: 0.0, y: 0.0 },
-            PathSegment::LineTo { x: 0.0, y: 1.0 },
-            PathSegment::LineTo { x: 1.0, y: 1.0 },
-            PathSegment::ClosePath,
-        ]),
-        usvg::Paint::Color(usvg::Color::new_rgb(255, 95, 89)),
-    )];
-
-    render_paths(thompson_paths, ucb_paths, &rtree);
 }
