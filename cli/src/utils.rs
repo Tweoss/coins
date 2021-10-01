@@ -287,37 +287,6 @@ fn render_boxes(
 	);
 }
 
-pub fn render_paths(
-	thompson_paths: Vec<(usvg::PathData, usvg::Paint)>,
-	ucb_paths: Vec<(usvg::PathData, usvg::Paint)>,
-	rtree: &usvg::Tree,
-) {
-	for path in thompson_paths {
-		rtree.root().append_kind(usvg::NodeKind::Path(usvg::Path {
-			data: std::rc::Rc::new(path.0),
-			stroke: Some(usvg::Stroke {
-				paint: path.1,
-				width: usvg::StrokeWidth::new(0.005),
-				..usvg::Stroke::default()
-			}),
-			transform: usvg::Transform::new(52.92, 0.0, 0.0, -52.92, 31.7625, 232.815),
-			..usvg::Path::default()
-		}));
-	}
-	for path in ucb_paths {
-		rtree.root().append_kind(usvg::NodeKind::Path(usvg::Path {
-			data: std::rc::Rc::new(path.0),
-			stroke: Some(usvg::Stroke {
-				paint: path.1,
-				width: usvg::StrokeWidth::new(0.005),
-				..usvg::Stroke::default()
-			}),
-			transform: usvg::Transform::new(52.92, 0.0, 0.0, -52.92, 116.445, 232.815),
-			..usvg::Path::default()
-		}));
-	}
-}
-
 fn render_thompson(tree: &usvg::Tree, thompson: &ThompsonBetaState) {
 	let (a1, a2, a3) = (thompson.a[0], thompson.a[1], thompson.a[2]);
 	let (b1, b2, b3) = (thompson.b[0], thompson.b[1], thompson.b[2]);
