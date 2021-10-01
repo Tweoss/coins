@@ -105,14 +105,14 @@ impl ThompsonBetaState {
 }
 
 pub struct UcbCountState {
-	successes: Vec<usize>,
+	past: Vec<(usize, usize)>,
 	total_flips: usize,
 }
 
 impl UcbCountState {
 	fn new() -> Self {
 		UcbCountState {
-			successes: vec![0; 3],
+			past: vec![(0, 0); 3],
 			total_flips: 0,
 		}
 	}
@@ -149,10 +149,14 @@ impl RenderState {
 		};
 		if let Some((coin, result)) = data.ucb.get(index) {
 			self.ucb.0.count[*coin] += 1;
-			self.ucb.0.successes += if *result { 1 } else { 0 };
-			self.ucb.0.failures += if *result { 0 } else { 1 };
-			self.ucb.1.successes[*coin] += if *result { 1 } else { 0 };
 			self.ucb.1.total_flips += 1;
+			if *result {
+				self.ucb.0.successes += 1;
+				self.ucb.1.past[*coin].0 += 1;
+			} else {
+				self.ucb.0.failures += 1;
+				self.ucb.1.past[*coin].1 += 1;
+			}
 		};
 		if let Some((coin, result)) = data.best_player.get(index) {
 			self.player.count[*coin] += 1;
@@ -164,6 +168,7 @@ impl RenderState {
 		let svg = usvg::Tree::create(*base_svg.svg_node());
 		svg.root().clone_from(&base_svg.root().make_deep_copy());
 		render_thompson(&svg, &self.thompson.1);
+		render_ucb(&svg, &self.ucb.1);
 
 		render_boxes(
 			&svg,
@@ -341,7 +346,7 @@ fn render_thompson(tree: &usvg::Tree, thompson: &ThompsonBetaState) {
 				width: usvg::StrokeWidth::new(0.02),
 				..usvg::Stroke::default()
 			}),
-			transform: usvg::Transform::new(52.92, 0.0, 0.0, -52.92, 31.7625, 232.815),
+			transform: usvg::Transform::new(52.92, 0.0, 0.0, -26.46, 31.7625, 232.815),
 			..usvg::Path::default()
 		}));
 	}
@@ -387,24 +392,28 @@ fn render_thompson(tree: &usvg::Tree, thompson: &ThompsonBetaState) {
 	}));
 }
 
-fn render_ucb(tree: &usvg::Tree, thompson: &ThompsonBetaState) {
-	let (a1, a2, a3) = (thompson.a[0], thompson.a[1], thompson.a[2]);
-	let (b1, b2, b3) = (thompson.b[0], thompson.b[1], thompson.b[2]);
-	fn append(tree: &usvg::Tree, a: f64, b: f64, stroke_color: usvg::Paint) {
-		use rv::prelude::ContinuousDistr;
-		let dist = rv::dist::Beta::new(a, b).unwrap();
-		let mut path = vec![PathSegment::MoveTo { x: 0.0, y: 0.0 }];
-		path.append(
-			&mut (1..20)
-				.map(|i| {
-					let x = i as f64 / 20.0;
-					let y = dist.pdf(&x);
-					PathSegment::LineTo { x, y }
-				})
-				.collect::<Vec<PathSegment>>(),
-		);
-		path.push(PathSegment::MoveTo { x: 1.0, y: 0.0 });
-		path.push(PathSegment::ClosePath);
+fn render_ucb(tree: &usvg::Tree, ucb: &UcbCountState) {
+	let temp = vec![ucb.past[0], ucb.past[1], ucb.past[2]].iter().map(|(a, b)| {
+		let a = *a as f64;
+		let b = *b as f64;
+		let total = a + b;
+		let total_flips = ucb.total_flips as f64;
+		(
+			a / (a + b),
+			a / (a + b)+ f64::sqrt( 2.0 * f64::log(total_flips, 10.0) / total),
+		)
+	}).collect::<Vec<(f64, f64)>>();
+	let ((mean1, upper1), (mean2, upper2), (mean3, upper3)) = (temp[0], temp[1], temp[2]);
+	fn append(tree: &usvg::Tree, mean: f64, upper: f64, stroke_color: usvg::Paint, y_offset: f64) {
+		let path = vec![PathSegment::MoveTo {
+			x: mean,
+			y: y_offset,
+		},
+		PathSegment::LineTo {
+			x: upper,
+			y: y_offset,
+		}
+		];
 		tree.root().append_kind(usvg::NodeKind::Path(usvg::Path {
 			data: std::rc::Rc::new(usvg::PathData(path)),
 			stroke: Some(usvg::Stroke {
@@ -412,29 +421,35 @@ fn render_ucb(tree: &usvg::Tree, thompson: &ThompsonBetaState) {
 				width: usvg::StrokeWidth::new(0.02),
 				..usvg::Stroke::default()
 			}),
-			transform: usvg::Transform::new(52.92, 0.0, 0.0, -52.92, 31.7625, 232.815),
+			transform: usvg::Transform::new(26.46, 0.0, 0.0, -52.92, 116.445, 232.815),
 			..usvg::Path::default()
 		}));
 	}
 	append(
 		tree,
-		a1 as f64,
-		b1 as f64,
+		mean1,
+		upper1,
 		usvg::Paint::Color(usvg::Color::new_rgb(0, 157, 255)),
+		0.25,
 	);
-	append(
+		append(
 		tree,
-		a2 as f64,
-		b2 as f64,
+		mean2,
+		upper2,
 		usvg::Paint::Color(usvg::Color::new_rgb(255, 95, 89)),
+		0.5,
 	);
 	append(
 		tree,
-		a3 as f64,
-		b3 as f64,
+		mean3,
+		upper3,
 		usvg::Paint::Color(usvg::Color::new_rgb(0, 176, 89)),
+		0.75,
 	);
 }
+
+
+
 
 fn render_text(
 	tree: &usvg::Tree,
