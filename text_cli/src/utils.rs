@@ -1,6 +1,8 @@
 use serde::Deserialize;
 use std::default::Default;
 
+const RESOLUTION_OF_DISTRIBUTION_SAMPLING: usize = 40;
+
 #[derive(Deserialize)]
 pub struct Dump {
 	algorithms: Vec<(String, Vec<(usize, bool)>)>,
@@ -306,9 +308,9 @@ fn render_thompson(state: &mut RenderedState, thompson: &ThompsonBetaState) {
 		let dist = rv::dist::Beta::new(a, b).unwrap();
 		let mut path = vec![format!("M {} {} ", 0.001, dist.pdf(&0.001))];
 		path.append(
-			&mut (1..20)
+			&mut (1..RESOLUTION_OF_DISTRIBUTION_SAMPLING)
 				.map(|i| {
-					let x = i as f64 / 20.0;
+					let x = i as f64 / RESOLUTION_OF_DISTRIBUTION_SAMPLING as f64;
 					let y = dist.pdf(&x);
 					format!("L {} {} ", x, y)
 				})
