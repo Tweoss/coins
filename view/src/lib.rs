@@ -93,7 +93,7 @@ impl Component for Viewer {
                     ),
                 );
                 } else {
-                    console_log!("{} could not be parsed.", data_string);
+                    console_log!("Could not parse output.");
                 }
             }
             ViewerIn::Forward => {
