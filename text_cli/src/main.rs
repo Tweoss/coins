@@ -3,12 +3,20 @@ use utils::*;
 use std::fs;
 
 fn main() {
+    // get number of iterations from args
+    let args: Vec<String> = std::env::args().collect();
+    let iterations = if args.len() > 1 {
+        args[1].parse::<usize>().unwrap()
+    } else {
+        println!("No iterations given, using default of 100");
+        100
+    };
 
     let data = Dump::load("../server/dump.json").to_filtered();
     let mut state = RenderState::new();
 
     // iterate for the longest number of turns taken. thompson, ucb, and naive should all have the same length
-    let total_iterations = data.thompson.len().max(data.best_player.len());
+    let total_iterations = usize::min(data.thompson.len().max(data.best_player.len()), iterations);
     let mut output = RenderedStateContainer::new(total_iterations, data.best_player_name.clone());
 
     for i in 0..total_iterations {
