@@ -60,7 +60,8 @@ enum ViewerIn {
 #[derive(Clone)]
 enum ViewerOut{
     Update(Box<RenderedState>),
-    Name(String),
+    NameLength((String, usize)),
+    Index(usize),
 }
 
 impl Component for Viewer {
@@ -82,13 +83,15 @@ impl Component for Viewer {
                     tx_view.send(&ViewerOut::Update(
                         self.data.state[self.index].clone(),
                     ));
-                    tx_view.send(&ViewerOut::Name(
+                    tx_view.send(&ViewerOut::NameLength((
                         self.data
                             .best_player_name
                             .splitn(2, '_')
                             .collect::<Vec<&str>>()[1]
                             .to_string(),
-                    ));
+                            self.data.state.len())
+                    ),
+                );
                 } else {
                     console_log!("{} could not be parsed.", data_string);
                 }
@@ -99,6 +102,7 @@ impl Component for Viewer {
                     tx_view.send(&ViewerOut::Update(
                         self.data.state[self.index].clone(),
                     ));
+                    tx_view.send(&ViewerOut::Index(self.index));
                 }
             }
             ViewerIn::Backward => {
@@ -107,6 +111,7 @@ impl Component for Viewer {
                     tx_view.send(&ViewerOut::Update(
                         self.data.state[self.index].clone(),
                     ));
+                    tx_view.send(&ViewerOut::Index(self.index));
                 }
             }
             ViewerIn::None => {}
@@ -120,11 +125,19 @@ impl Component for Viewer {
         rx: &Receiver<ViewerOut>,
     ) -> ViewBuilder<HtmlElement> {
         let rx_name = rx.branch_filter_map(|msg: &ViewerOut| match msg {
-            ViewerOut::Name(name) => Some(name.clone()),
+            ViewerOut::NameLength((name, _)) => Some(name.clone()),
+            _ => None,
+        });
+        let rx_length = rx.branch_filter_map(|msg: &ViewerOut| match msg {
+            ViewerOut::NameLength((_, length)) => Some(format!("{} ", length)),
             _ => None,
         });
         let rx_data = rx.branch_filter_map(|msg: &ViewerOut| match msg {
             ViewerOut::Update(data) => Some(data.clone()),
+            _ => None,
+        });
+        let rx_index = rx.branch_filter_map(|msg: &ViewerOut| match msg {
+            ViewerOut::Index(index) => Some(format!(" {}/", index.clone())),
             _ => None,
         });
 
@@ -144,11 +157,13 @@ impl Component for Viewer {
             e if e == *"ArrowLeft" => ViewerIn::Backward,
             _ => ViewerIn::None,
         });
+        let tx_forward = tx.contra_map(|_| ViewerIn::Forward);
+        let tx_backward = tx.contra_map(|_| ViewerIn::Backward);
 
         let ns = "http://www.w3.org/2000/svg";
 
         builder!(
-            <div on:keydown=tx_key.clone()>
+            <div on:keydown=tx_key>
                 <svg style="width: 100%; height: 100%;" width= "793.7007874015749" height= "1122.5196850393702" viewBox= "0 0 210 297" xmlns= "http://www.w3.org/2000/svg" xmlns=ns>
                     <defs xmlns=ns>
                         <clipPath id="clipPath1" xmlns=ns>
@@ -213,15 +228,19 @@ impl Component for Viewer {
                     // ? the title for the player name
                     <text style="font-size:4.5861px;line-height:1.25;font-family:sans-serif;text-align:center;text-anchor:middle;stroke-width:0.264583" x="166.6875" y="23.8125" xmlns=ns><tspan id="tspan1192" x="166.6875" y="23.8125" style="stroke-width:0.264583" xmlns=ns>{("Player Name", rx_name)}</tspan></text>
                     // ? the paths for thompson
-                    <path d={rx_data.branch_map(|m| m.thompson_paths.0.clone())} style="stroke:rgb(0,157,255);stroke-width:0.02;" transform="matrix(52.92 0.0 0.0 -26.46 31.76225 232.815)" xmlns=ns/>
-                    <path d={rx_data.branch_map(|m| m.thompson_paths.1.clone())} style="stroke:rgb(255,957,89);stroke-width:0.02;" transform="matrix(52.92 0.0 0.0 -26.46 31.76225 232.815)" xmlns=ns/>
-                    <path d={rx_data.branch_map(|m| m.thompson_paths.2.clone())} style="stroke:rgb(0,176,89);stroke-width:0.02;" transform="matrix(52.92 0.0 0.0 -26.46 31.76225 232.815)" xmlns=ns/>
+                    <path d={rx_data.branch_map(|m| m.thompson_paths.0.clone())} style="stroke:rgb(0,157,255);stroke-width:0.02;fill:none;" transform="matrix(52.92 0.0 0.0 -26.46 31.76225 232.815)" xmlns=ns/>
+                    <path d={rx_data.branch_map(|m| m.thompson_paths.1.clone())} style="stroke:rgb(255,957,89);stroke-width:0.02;fill:none;" transform="matrix(52.92 0.0 0.0 -26.46 31.76225 232.815)" xmlns=ns/>
+                    <path d={rx_data.branch_map(|m| m.thompson_paths.2.clone())} style="stroke:rgb(0,176,89);stroke-width:0.02;fill:none;" transform="matrix(52.92 0.0 0.0 -26.46 31.76225 232.815)" xmlns=ns/>
                     // ? the paths for ucb
-                    <path d={rx_data.branch_map(|m| m.ucb_paths.0.clone())} style="stroke:rgb(0,157,255);stroke-width:0.02;" transform="matrix(26.46 0.0 0.0 -52.92 116.445 232.815)" xmlns=ns/>
-                    <path d={rx_data.branch_map(|m| m.ucb_paths.1.clone())} style="stroke:rgb(255,957,89);stroke-width:0.02;" transform="matrix(26.46 0.0 0.0 -52.92 116.445 232.815)" xmlns=ns/>
-                    <path d={rx_data.branch_map(|m| m.ucb_paths.2.clone())} style="stroke:rgb(0,176,89);stroke-width:0.02;" transform="matrix(26.46 0.0 0.0 -52.92 116.445 232.815)" xmlns=ns/>
+                    <path d={rx_data.branch_map(|m| m.ucb_paths.0.clone())} style="stroke:rgb(0,157,255);stroke-width:0.02;fill:none;" transform="matrix(26.46 0.0 0.0 -52.92 116.445 232.815)" xmlns=ns/>
+                    <path d={rx_data.branch_map(|m| m.ucb_paths.1.clone())} style="stroke:rgb(255,957,89);stroke-width:0.02;fill:none;" transform="matrix(26.46 0.0 0.0 -52.92 116.445 232.815)" xmlns=ns/>
+                    <path d={rx_data.branch_map(|m| m.ucb_paths.2.clone())} style="stroke:rgb(0,176,89);stroke-width:0.02;fill:none;" transform="matrix(26.46 0.0 0.0 -52.92 116.445 232.815)" xmlns=ns/>
                 </svg>
-                <textarea on:keydown=tx_key on:change=tx_data rows="4" cols="50">{"Paste data here"}</textarea>
+                <div>
+                    <p><button on:click=tx_backward type="button">{"<-"}</button> <span>{(" 0/",rx_index)}</span>{("0 ",rx_length)} <button on:click=tx_forward type="button">{"->"}</button></p>
+                </div>
+                <br></br>
+                <textarea on:change=tx_data rows="4" cols="50">{"Paste data here"}</textarea>
             </div>
         )
     }
