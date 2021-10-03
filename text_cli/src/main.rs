@@ -12,7 +12,7 @@ fn main() {
         100
     };
 
-    let data = Dump::load("../server/dump.json").to_filtered();
+    let data = Dump::load("../dump.json").to_filtered();
     let mut state = RenderState::new();
 
     // iterate for the longest number of turns taken. thompson, ucb, and naive should all have the same length

@@ -2,3 +2,8 @@ cli/temp.log
 cli/temp.svg
 cli/temp.png
 cli/images/**
+text_cli/src/main.rs
+.gitignore
+server/dump.json
+text_cli/rendered_dump.json
+dump.json
