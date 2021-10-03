@@ -338,6 +338,9 @@ fn render_ucb(state: &mut RenderedState, ucb: &UcbCountState) {
 		.collect::<Vec<(f64, f64)>>();
 	let ((mean1, upper1), (mean2, upper2), (mean3, upper3)) = (temp[0], temp[1], temp[2]);
 	fn append(mean: f64, upper: f64, y_offset: f64) -> String {
+		if mean.is_nan() || upper.is_nan() {
+			return "M 0 0 L 0 0 Z".to_string();
+		}
 		format!("M {} {} L {} {} Z", mean, y_offset, upper, y_offset)
 	}
 	state.ucb_paths.0 = append(mean1, upper1, 0.25);
