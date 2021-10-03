@@ -137,6 +137,7 @@ pub async fn flip(req: HttpRequest) -> impl Responder {
 		.body(format!("{}", result))
 }
 
+/// Getting information for user to update their view
 #[get("/count")]
 pub async fn count(req: HttpRequest) -> impl Responder {
 	use crate::app::GetCount;
