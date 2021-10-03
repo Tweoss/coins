@@ -165,6 +165,7 @@ pub async fn flush(req: HttpRequest) -> impl Responder {
 		.body("Sent Application message to flush")
 }
 
+/// instead of 404 page, redirects to root
 pub async fn not_found() -> HttpResponse {
 	HttpResponse::build(http::StatusCode::FOUND)
 		.header(http::header::LOCATION, "/".to_string())
