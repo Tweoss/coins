@@ -1,0 +1,12 @@
+/home/runner/work/coins/coins/server/target/x86_64-unknown-linux-gnu/release/deps/cookie-855f668c19f88c6d.rmeta: /home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cookie-0.14.4/src/lib.rs /home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cookie-0.14.4/src/builder.rs /home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cookie-0.14.4/src/parse.rs /home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cookie-0.14.4/src/jar.rs /home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cookie-0.14.4/src/delta.rs /home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cookie-0.14.4/src/draft.rs
+
+/home/runner/work/coins/coins/server/target/x86_64-unknown-linux-gnu/release/deps/libcookie-855f668c19f88c6d.rlib: /home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cookie-0.14.4/src/lib.rs /home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cookie-0.14.4/src/builder.rs /home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cookie-0.14.4/src/parse.rs /home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cookie-0.14.4/src/jar.rs /home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cookie-0.14.4/src/delta.rs /home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cookie-0.14.4/src/draft.rs
+
+/home/runner/work/coins/coins/server/target/x86_64-unknown-linux-gnu/release/deps/cookie-855f668c19f88c6d.d: /home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cookie-0.14.4/src/lib.rs /home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cookie-0.14.4/src/builder.rs /home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cookie-0.14.4/src/parse.rs /home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cookie-0.14.4/src/jar.rs /home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cookie-0.14.4/src/delta.rs /home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cookie-0.14.4/src/draft.rs
+
+/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cookie-0.14.4/src/lib.rs:
+/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cookie-0.14.4/src/builder.rs:
+/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cookie-0.14.4/src/parse.rs:
+/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cookie-0.14.4/src/jar.rs:
+/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cookie-0.14.4/src/delta.rs:
+/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cookie-0.14.4/src/draft.rs:
