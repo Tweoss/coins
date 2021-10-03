@@ -314,7 +314,7 @@ fn render_thompson(state: &mut RenderedState, thompson: &ThompsonBetaState) {
 				})
 				.collect::<Vec<String>>(),
 		);
-		path.push("M 1.0 1.0 Z".to_string());
+		path.push("M 1.0 0.0 Z".to_string());
 		path.iter().fold(String::new(), |acc, x| acc + x)
 	}
 	state.thompson_paths.0 = append(a1, b1);
