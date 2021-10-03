@@ -153,7 +153,7 @@ pub async fn count(req: HttpRequest) -> impl Responder {
 		.body(format!("{}\n{}", count, id))
 }
 
-/// Send a message to the application to flush state
+/// Send a message to the application to flush state into dump.json
 #[post("/flush")]
 pub async fn flush(req: HttpRequest) -> impl Responder {
 	use crate::app::Flush;
