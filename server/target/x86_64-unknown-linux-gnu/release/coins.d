@@ -1,0 +1,1 @@
+/home/runner/work/coins/coins/server/target/x86_64-unknown-linux-gnu/release/coins: /home/runner/work/coins/coins/server/src/app.rs /home/runner/work/coins/coins/server/src/cli.rs /home/runner/work/coins/coins/server/src/handlers.rs /home/runner/work/coins/coins/server/src/main.rs
