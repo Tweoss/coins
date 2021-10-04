@@ -1,0 +1,20 @@
+rect {
+    fill: #009dff;
+    fill-opacity: 1;
+    stroke: #f9f9f9;
+    stroke-width: 0.632455;
+    stroke-linejoin: round;
+    paint-order: markers fill stroke
+}
+
+svg>*:hover:not(.graph) {
+    stroke-width: 2px;
+}
+
+svg>.graph:hover {
+    stroke-width: 0.05px;
+}
+
+svg>.graph:hover~rect {
+    opacity: 50%;
+}
