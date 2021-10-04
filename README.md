@@ -16,6 +16,7 @@
   - [Compiling](#compiling-1)
 - [View](#view)
   - [Files](#files-3)
+  - [Compiling](#compiling-2)
 - [CLI](#cli)
   - [Files](#files-4)
   - [Running](#running-1)
