@@ -51,7 +51,7 @@ struct Viewer {
 
 #[derive(Clone)]
 enum ViewerIn {
-    Input(String),
+    Input(Vec<u8>),
     Forward,
     Backward,
     None,
@@ -77,7 +77,7 @@ impl Component for Viewer {
     ) {
         match msg {
             ViewerIn::Input(data_string) => {
-                if let Ok(data) = serde_json::from_str::<RenderedStateContainer>(&data_string) {
+                if let Ok(data) = serde_cbor::from_slice::<RenderedStateContainer>(&data_string) {
                     self.index = 0;
                     self.data = data;
                     tx_view.send(&ViewerOut::Update(self.data.state[self.index].clone()));
@@ -134,18 +134,6 @@ impl Component for Viewer {
             _ => None,
         });
 
-        // let tx_data = tx.contra_map(|e: &Event| {
-        //     ViewerIn::Input({
-        //         e.target()
-        //             .expect("Must have target for event")
-        //             .unchecked_ref::<HtmlInputElement>()
-        //             .files()
-        //             .expect("Must have files on a file element")
-        //             .get(0)
-        //             .expect("Must have at least one file")
-        //             .array_buffer();
-        //     })
-        // });
         let (tx_input, rx_input) = txrx();
         let t = tx.clone();
         rx_input.respond(move |e: &Event| {
@@ -166,8 +154,7 @@ impl Component for Viewer {
                 let typebuf: js_sys::Uint8Array = js_sys::Uint8Array::new(&buf_val);
                 let mut body = vec![0; typebuf.length() as usize];
                 typebuf.copy_to(&mut body[..]);
-                let data = String::from_utf8(body).unwrap();
-                ViewerIn::Input(data)
+                ViewerIn::Input(body)
             });
         });
 
@@ -259,7 +246,7 @@ impl Component for Viewer {
                     <p><button on:click=tx_backward type="button">{"<-"}</button> <span>{(" 0/",rx_index)}</span>{("0 ",rx_length)} <button on:click=tx_forward type="button">{"->"}</button></p>
                 </div>
                 <br></br>
-                <input on:change=tx_input type="file" accept=".binary">{"Paste data here"}</input>
+                <input on:change=tx_input type="file" accept=".cbor">{"Paste data here"}</input>
             </div>
         )
     }

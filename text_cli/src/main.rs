@@ -1,6 +1,7 @@
 mod utils;
+
+use std::fs::File;
 use utils::*;
-use std::fs;
 
 fn main() {
     // get number of iterations from args
@@ -12,7 +13,7 @@ fn main() {
         100
     };
 
-    let data = Dump::load("../dump.json").to_filtered();
+    let data = Dump::load("../server/dump.cbor").to_filtered();
     let mut state = RenderState::new();
 
     // iterate for the longest number of turns taken. thompson, ucb, and naive should all have the same length
@@ -26,6 +27,6 @@ fn main() {
         state.render(&mut output.state[i]);
     }
     // use serde to dump information
-	let string = serde_json::to_string(&output).unwrap();
-    fs::write("rendered_dump.json", string).unwrap();
+    let file = File::create("rendered_dump.cbor").expect("Could not open output file");
+    serde_cbor::to_writer(file, &output).expect("Could not write to output file");
 }

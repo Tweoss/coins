@@ -13,7 +13,7 @@ impl Dump {
 	pub fn load(path: &str) -> Self {
 		let file = std::fs::File::open(path).unwrap();
 		let reader = std::io::BufReader::new(file);
-		let dump: Dump = serde_json::from_reader(reader).unwrap();
+		let dump: Dump = serde_cbor::from_reader(reader).unwrap();
 		dump
 	}
 	pub fn to_filtered(&self) -> FilteredData {

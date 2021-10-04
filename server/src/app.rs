@@ -3,7 +3,6 @@ use rand::{rngs::ThreadRng, Rng};
 use rand_distr::{Bernoulli, Beta, Distribution};
 use serde::Serialize;
 use std::collections::HashMap;
-use std::fs;
 
 const EXPLORATION_TRIALS: usize = 30;
 
@@ -321,8 +320,8 @@ impl Handler<Flush> for AppState {
 		if self.verbose {
 			println!("{:?}", msg);
 		}
-		let string = serde_json::to_string(&self.to_dump()).unwrap();
-		fs::write("dump.json", string).unwrap();
+		let file = std::fs::File::create("dump.cbor").expect("Could not open output file");
+		serde_cbor::to_writer(file, &self.to_dump()).expect("Could not write to output file");
 	}
 }
 
