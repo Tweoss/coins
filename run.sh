@@ -1,3 +1,4 @@
+# convenience shell script. uses a cargo binary.
 cd text_cli;
 cargo run 1000;
 cd ../view;
