@@ -310,7 +310,7 @@ impl Handler<CoinFlipped> for AppState {
 			.entry(msg.user_id)
 			.or_insert_with(Vec::new)
 			.push((msg.arm, msg.result));
-		// self.algorithm_state.update();
+		self.algorithm_state.update();
 	}
 }
 
