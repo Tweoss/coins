@@ -1,7 +1,7 @@
 use serde::Deserialize;
 use std::default::Default;
 
-const RESOLUTION_OF_DISTRIBUTION_SAMPLING: usize = 40;
+const RESOLUTION_OF_DISTRIBUTION_SAMPLING: usize = 80;
 
 #[derive(Deserialize)]
 pub struct Dump {
