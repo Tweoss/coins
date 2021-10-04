@@ -41,6 +41,8 @@ features = [
   "Response",
   "Window",
   "Location",
+  "FileList",
+  "File",
 ]
 console_log = { version = "0.2", features = ["color"] }
 

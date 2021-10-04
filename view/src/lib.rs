@@ -58,7 +58,7 @@ enum ViewerIn {
 }
 
 #[derive(Clone)]
-enum ViewerOut{
+enum ViewerOut {
     Update(Box<RenderedState>),
     NameLength((String, usize)),
     Index(usize),
@@ -80,18 +80,15 @@ impl Component for Viewer {
                 if let Ok(data) = serde_json::from_str::<RenderedStateContainer>(&data_string) {
                     self.index = 0;
                     self.data = data;
-                    tx_view.send(&ViewerOut::Update(
-                        self.data.state[self.index].clone(),
-                    ));
+                    tx_view.send(&ViewerOut::Update(self.data.state[self.index].clone()));
                     tx_view.send(&ViewerOut::NameLength((
                         self.data
                             .best_player_name
                             .splitn(2, '_')
                             .collect::<Vec<&str>>()[1]
                             .to_string(),
-                            self.data.state.len())
-                    ),
-                );
+                        self.data.state.len(),
+                    )));
                 } else {
                     console_log!("Could not parse output.");
                 }
@@ -99,18 +96,14 @@ impl Component for Viewer {
             ViewerIn::Forward => {
                 if self.index + 1 < self.data.state.len() {
                     self.index += 1;
-                    tx_view.send(&ViewerOut::Update(
-                        self.data.state[self.index].clone(),
-                    ));
+                    tx_view.send(&ViewerOut::Update(self.data.state[self.index].clone()));
                     tx_view.send(&ViewerOut::Index(self.index));
                 }
             }
             ViewerIn::Backward => {
                 if self.index > 0 {
                     self.index -= 1;
-                    tx_view.send(&ViewerOut::Update(
-                        self.data.state[self.index].clone(),
-                    ));
+                    tx_view.send(&ViewerOut::Update(self.data.state[self.index].clone()));
                     tx_view.send(&ViewerOut::Index(self.index));
                 }
             }
@@ -141,15 +134,41 @@ impl Component for Viewer {
             _ => None,
         });
 
-        let tx_data = tx.contra_map(|e: &Event| {
-            ViewerIn::Input(
-                e.target()
-                    .expect("Must have target for event")
-                    .unchecked_ref::<HtmlInputElement>()
-                    .value()
-                    .trim()
-                    .to_string(),
-            )
+        // let tx_data = tx.contra_map(|e: &Event| {
+        //     ViewerIn::Input({
+        //         e.target()
+        //             .expect("Must have target for event")
+        //             .unchecked_ref::<HtmlInputElement>()
+        //             .files()
+        //             .expect("Must have files on a file element")
+        //             .get(0)
+        //             .expect("Must have at least one file")
+        //             .array_buffer();
+        //     })
+        // });
+        let (tx_input, rx_input) = txrx();
+        let t = tx.clone();
+        rx_input.respond(move |e: &Event| {
+            let e = e.clone();
+            t.send_async(async move {
+                let buf_val = wasm_bindgen_futures::JsFuture::from(
+                    e.target()
+                        .expect("Must have a target for event")
+                        .unchecked_ref::<HtmlInputElement>()
+                        .files()
+                        .expect("Must have files on a file element")
+                        .get(0)
+                        .expect("Must have at least one file")
+                        .array_buffer(),
+                )
+                .await.unwrap();
+                assert!(buf_val.is_instance_of::<js_sys::ArrayBuffer>());
+                let typebuf: js_sys::Uint8Array = js_sys::Uint8Array::new(&buf_val);
+                let mut body = vec![0; typebuf.length() as usize];
+                typebuf.copy_to(&mut body[..]);
+                let data = String::from_utf8(body).unwrap();
+                ViewerIn::Input(data)
+            });
         });
 
         let tx_key = tx.contra_map(|e: &Event| match e.unchecked_ref::<KeyboardEvent>().key() {
@@ -240,7 +259,7 @@ impl Component for Viewer {
                     <p><button on:click=tx_backward type="button">{"<-"}</button> <span>{(" 0/",rx_index)}</span>{("0 ",rx_length)} <button on:click=tx_forward type="button">{"->"}</button></p>
                 </div>
                 <br></br>
-                <textarea on:change=tx_data rows="4" cols="50">{"Paste data here"}</textarea>
+                <input on:change=tx_input type="file" accept=".binary">{"Paste data here"}</input>
             </div>
         )
     }
