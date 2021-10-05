@@ -86,6 +86,17 @@ pub async fn game_style() -> Result<NamedFile> {
 	)?)
 }
 
+/// Handling for game styling
+#[get("/game/audio/{file}.mp3")]
+pub async fn game_audio(path: web::Path<String>) -> Result<NamedFile> {
+	let filename = path.into_inner();
+	Ok(NamedFile::open(
+		("../game/audio/".to_string() + &filename + ".mp3")
+			.parse::<PathBuf>()
+			.unwrap(),
+	)?)
+}
+
 #[get("/")]
 pub async fn index() -> Result<NamedFile> {
 	Ok(NamedFile::open("../login/index.html")?)

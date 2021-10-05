@@ -34,6 +34,7 @@ async fn main() -> std::io::Result<()> {
 			.route("/game/", web::get().to(handlers::game_html))
 			.service(handlers::game_files)
 			.service(handlers::game_style)
+			.service(handlers::game_audio)
 			.service(handlers::flip)
 			.service(handlers::flush)
 			.service(handlers::redirect)

@@ -41,6 +41,7 @@ features = [
   "Response",
   "Window",
   "Location",
+  "HtmlAudioElement"
 ]
 console_log = { version = "0.2", features = ["color"] }
 
