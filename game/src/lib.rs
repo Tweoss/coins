@@ -112,7 +112,10 @@ impl Component for Game {
 				tx_view.send(&GameOut::Count(self.count));
 			}
 			GameIn::NewAudio(yes) => {
-				let item = audio::Audio { id: self.next_id , yes: *yes};
+				let item = audio::Audio {
+					id: self.next_id,
+					yes: *yes,
+				};
 				self.next_id += 1;
 				console_log!("Saying hi again");
 
