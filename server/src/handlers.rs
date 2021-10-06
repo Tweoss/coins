@@ -138,14 +138,18 @@ pub async fn flip(req: HttpRequest) -> impl Responder {
 	let mut rng = app_data.rng.clone();
 	let addr = &app_data.addr;
 	let result: bool = app_data.get_bernoulli(coin).sample(&mut rng);
-	addr.do_send(CoinFlipped {
-		user_id: req.cookie("id").unwrap().value().to_string(),
-		arm: coin,
-		result,
-	});
-	HttpResponse::build(http::StatusCode::OK)
-		.content_type("plain/text")
-		.body(format!("{}", result))
+	if let Some(user_id) = req.cookie("id") {
+		addr.do_send(CoinFlipped {
+			user_id: user_id.value().to_string(),
+			arm: coin,
+			result,
+		});
+		HttpResponse::build(http::StatusCode::OK)
+			.content_type("plain/text")
+			.body(format!("{}", result))
+	} else {
+		return HttpResponse::build(http::StatusCode::UNAUTHORIZED).finish();
+	}
 }
 
 /// Getting information for user to update their view

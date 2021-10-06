@@ -15,6 +15,10 @@ use handlers::ApplicationState;
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
 	let opts: Opts = Opts::parse();
+	if opts.coin_probs.len() < 3 {
+		println!("At least 3 coin probabilities are required");
+		std::process::exit(1);
+	}
 	if opts.verbose {
 		std::env::set_var("RUST_LOG", "actix_web=debug");
 		env_logger::init();
