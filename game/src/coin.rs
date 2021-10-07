@@ -1,11 +1,5 @@
 use mogwai::prelude::*;
-use web_sys::{console::log, Request, RequestInit, RequestMode, Response};
-
-macro_rules! console_log {
-    // Note that this is using the `log` function imported above during
-    // `bare_bones`
-    ($($t:tt)*) => (let mut __a__ = js_sys::Array::new(); __a__.set(0, format_args!($($t)*).to_string().into()); log(&__a__))
-}
+use web_sys::{Request, RequestInit, RequestMode, Response};
 
 #[derive(Clone)]
 pub struct Coin {
@@ -53,7 +47,6 @@ impl Component for Coin {
 						.dyn_into::<Response>()
 						.expect("Malformed response");
 					if response.status() == 200 {
-						console_log!("Successfully flipped, response: {:?}", response);
 						let result = JsFuture::from(response.text().expect("Malformed response"))
 							.await
 							.expect("Malformed response")

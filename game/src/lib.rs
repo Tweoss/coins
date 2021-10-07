@@ -117,7 +117,6 @@ impl Component for Game {
 					yes: *yes,
 				};
 				self.next_id += 1;
-				console_log!("Saying hi again");
 
 				let gizmo = Gizmo::from(item);
 				subscriber.subscribe_filter_map(&gizmo.recv, |child_msg: &audio::AudioOut| {
@@ -160,7 +159,6 @@ impl Component for Game {
 			});
 			g.recv.clone().forward_filter_map(tx, |m: &coin::CoinOut| {
 				let coin::CoinOut::Flipped(flipped) = m;
-				console_log!("Saying HI");
 				Some(GameIn::NewAudio(*flipped))
 			});
 		});
