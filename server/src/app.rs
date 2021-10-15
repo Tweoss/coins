@@ -322,6 +322,7 @@ impl Handler<Flush> for AppState {
 		}
 		let file = std::fs::File::create("dump.cbor").expect("Could not open output file");
 		serde_cbor::to_writer(file, &self.to_dump()).expect("Could not write to output file");
+		println!("Dumped to dump.cbor");
 	}
 }
 
